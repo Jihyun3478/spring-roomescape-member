@@ -114,7 +114,7 @@ public class AdminThemeControllerTest {
         RestAssured.given().log().all()
                 .when().delete("/admin/themes/" + themeId)
                 .then().log().all()
-                .statusCode(422);
+                .statusCode(409);
     }
 
     private int createTime(String startAt) {

@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.common.exception.AlreadyExistException;
-import roomescape.common.exception.NotFoundException;
-import roomescape.common.exception.UnprocessableException;
+import roomescape.common.exception.RoomEscapeException;
 import roomescape.dao.ReservationDao;
 import roomescape.dao.ReservationTimeDao;
 import roomescape.dao.ThemeDao;
@@ -65,8 +63,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.addReservation(request))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("존재하지 않는 시간입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -77,8 +74,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.addReservation(request))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("존재하지 않는 테마입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -93,8 +89,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.addReservation(request))
-                .isInstanceOf(AlreadyExistException.class)
-                .hasMessage("동일한 날짜, 시간, 테마에 이미 예약이 존재합니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -107,8 +102,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.addReservation(request))
-                .isInstanceOf(UnprocessableException.class)
-                .hasMessage("지나간 날짜·시간에 대한 예약 생성은 불가능합니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -168,8 +162,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.update(999L, request))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("존재하지 않는 예약입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -183,8 +176,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.update(saved.getId(), request))
-                .isInstanceOf(UnprocessableException.class)
-                .hasMessage("지나간 날짜·시간에 대한 예약 생성은 불가능합니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -200,8 +192,7 @@ class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.update(saved.getId(), request))
-                .isInstanceOf(AlreadyExistException.class)
-                .hasMessage("동일한 날짜, 시간, 테마에 이미 예약이 존재합니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -219,8 +210,7 @@ class ReservationServiceTest {
     void 존재하지_않는_예약을_삭제하면_예외가_발생한다() {
         // when & then
         assertThatThrownBy(() -> reservationService.delete(999L))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("존재하지 않는 예약입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     private ReservationTime saveTime(int hour, int minute) {

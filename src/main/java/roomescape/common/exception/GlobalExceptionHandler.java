@@ -11,25 +11,11 @@ import roomescape.common.exception.dto.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException exception) {
+    @ExceptionHandler(RoomEscapeException.class)
+    public ResponseEntity<ErrorResponse> handleRoomEscapeException(RoomEscapeException exception) {
         return ResponseEntity
-                .status(exception.getStatus())
-                .body(ErrorResponse.from(exception.getMessage()));
-    }
-
-    @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<ErrorResponse> handleAlreadyExistException(AlreadyExistException exception) {
-        return ResponseEntity
-                .status(exception.getStatus())
-                .body(ErrorResponse.from(exception.getMessage()));
-    }
-
-    @ExceptionHandler(UnprocessableException.class)
-    public ResponseEntity<ErrorResponse> handleUnprocessableException(UnprocessableException exception) {
-        return ResponseEntity
-                .status(exception.getStatus())
-                .body(ErrorResponse.from(exception.getMessage()));
+                .status(exception.getErrorCode().getHttpStatus())
+                .body(ErrorResponse.from(exception.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

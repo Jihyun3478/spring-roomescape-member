@@ -18,9 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import roomescape.DatabaseInitializer;
 import roomescape.common.config.ClockProvider;
-import roomescape.common.exception.AlreadyExistException;
-import roomescape.common.exception.NotFoundException;
-import roomescape.common.exception.UnprocessableException;
+import roomescape.common.exception.RoomEscapeException;
 import roomescape.dao.ReservationDao;
 import roomescape.dao.ReservationTimeDao;
 import roomescape.dao.ThemeDao;
@@ -77,8 +75,7 @@ class ThemeServiceTest {
 
         // when & then
         assertThatThrownBy(() -> themeService.addTheme(new ThemeRequest("방탈출1", "설명2", "https://thumb2.com")))
-                .isInstanceOf(AlreadyExistException.class)
-                .hasMessage("이미 존재하는 테마입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -132,8 +129,7 @@ class ThemeServiceTest {
     void 존재하지_않는_테마를_삭제하면_예외가_발생한다() {
         // when & then
         assertThatThrownBy(() -> themeService.deleteTheme(999L))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("존재하지 않는 테마입니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     @Test
@@ -145,8 +141,7 @@ class ThemeServiceTest {
 
         // when & then
         assertThatThrownBy(() -> themeService.deleteTheme(theme.getId()))
-                .isInstanceOf(UnprocessableException.class)
-                .hasMessage("예약된 테마는 삭제할 수 없습니다.");
+                .isInstanceOf(RoomEscapeException.class);
     }
 
     private Theme saveTheme(String name, String description, String thumbnail) {

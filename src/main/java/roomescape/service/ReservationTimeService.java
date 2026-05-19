@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.common.exception.NotFoundException;
-import roomescape.common.exception.UnprocessableException;
+import roomescape.common.exception.RoomEscapeException;
+import roomescape.common.exception.code.ReservationTimeErrorCode;
+import roomescape.common.exception.code.ThemeErrorCode;
 import roomescape.dao.ReservationDao;
 import roomescape.dao.ReservationTimeDao;
 import roomescape.dao.ThemeDao;
@@ -51,7 +52,7 @@ public class ReservationTimeService {
     public void deleteReservationTime(long reservationTimeId) {
         Optional<ReservationTime> reservationTime = reservationTimeDao.selectById(reservationTimeId);
         if (reservationTime.isEmpty()) {
-            throw new NotFoundException("존재하지 않는 예약 시간입니다.");
+            throw new RoomEscapeException(ReservationTimeErrorCode.NOT_FOUND);
         }
 
         validateTimeIncludeReservation(reservationTimeId);
@@ -61,14 +62,14 @@ public class ReservationTimeService {
     private void validateTheme(Long themeId) {
         boolean exists = themeDao.existsById(themeId);
         if (!exists) {
-            throw new NotFoundException("존재하지 않는 테마입니다.");
+            throw new RoomEscapeException(ThemeErrorCode.NOT_FOUND);
         }
     }
 
     private void validateTimeIncludeReservation(long reservationTimeId) {
         boolean existsByTimeId = reservationDao.existsByTimeId(reservationTimeId);
         if (existsByTimeId) {
-            throw new UnprocessableException("예약된 시간은 삭제할 수 없습니다.");
+            throw new RoomEscapeException(ThemeErrorCode.THEME_CANNOT_DELETE);
         }
     }
 }

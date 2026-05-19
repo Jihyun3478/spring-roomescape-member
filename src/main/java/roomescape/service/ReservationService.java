@@ -6,9 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.common.config.ClockProvider;
-import roomescape.common.exception.AlreadyExistException;
-import roomescape.common.exception.NotFoundException;
-import roomescape.common.exception.UnprocessableException;
+import roomescape.common.exception.RoomEscapeException;
+import roomescape.common.exception.code.ReservationErrorCode;
+import roomescape.common.exception.code.ReservationTimeErrorCode;
+import roomescape.common.exception.code.ThemeErrorCode;
 import roomescape.dao.ReservationDao;
 import roomescape.dao.ReservationTimeDao;
 import roomescape.dao.ThemeDao;
@@ -77,31 +78,31 @@ public class ReservationService {
     public void delete(Long reservationId) {
         int deleted = reservationDao.delete(reservationId);
         if (deleted == 0) {
-            throw new NotFoundException("존재하지 않는 예약입니다.");
+            throw new RoomEscapeException(ReservationErrorCode.NOT_FOUND);
         }
     }
 
     private ReservationTime getTime(long timeId) {
         return reservationTimeDao.selectById(timeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 시간입니다."));
+                .orElseThrow(() -> new RoomEscapeException(ReservationTimeErrorCode.NOT_FOUND));
     }
 
     private Theme getTheme(long themeId) {
         return themeDao.selectById(themeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 테마입니다."));
+                .orElseThrow(() -> new RoomEscapeException(ThemeErrorCode.NOT_FOUND));
     }
 
     private void validateUniqueReservation(LocalDate date, long timeId, long themeId) {
         boolean exists = reservationDao.existsByDateAndTimeIdAndThemeId(date, timeId, themeId);
         if (exists) {
-            throw new AlreadyExistException("동일한 날짜, 시간, 테마에 이미 예약이 존재합니다.");
+            throw new RoomEscapeException(ReservationErrorCode.DUPLICATE);
         }
     }
 
     private void validateUniqueExcludingSelf(LocalDate date, long timeId, long themeId, long id) {
         boolean exists = reservationDao.existsDuplicateExcluding(date, timeId, themeId, id);
         if (exists) {
-            throw new AlreadyExistException("동일한 날짜, 시간, 테마에 이미 예약이 존재합니다.");
+            throw new RoomEscapeException(ReservationErrorCode.DUPLICATE);
         }
     }
 
@@ -110,12 +111,12 @@ public class ReservationService {
         LocalDateTime reservationDateAndTime = LocalDateTime.of(date, reservationTime.getStartAt());
 
         if (reservationDateAndTime.isBefore(now)) {
-            throw new UnprocessableException("지나간 날짜·시간에 대한 예약 생성은 불가능합니다.");
+            throw new RoomEscapeException(ReservationErrorCode.PAST_DATETIME);
         }
     }
 
     private Reservation getReservation(Long reservationId) {
         return reservationDao.selectById(reservationId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new RoomEscapeException(ReservationErrorCode.NOT_FOUND));
     }
 }

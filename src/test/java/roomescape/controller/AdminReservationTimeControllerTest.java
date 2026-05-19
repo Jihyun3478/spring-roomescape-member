@@ -90,7 +90,7 @@ public class AdminReservationTimeControllerTest {
         RestAssured.given().log().all()
                 .when().delete("/admin/times/" + timeId)
                 .then().log().all()
-                .statusCode(422);
+                .statusCode(409);
     }
 
     private int createTheme(String name, String description, String thumbnail) {
