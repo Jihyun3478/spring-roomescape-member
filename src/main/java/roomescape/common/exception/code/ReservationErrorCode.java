@@ -3,6 +3,7 @@ package roomescape.common.exception.code;
 import org.springframework.http.HttpStatus;
 
 public enum ReservationErrorCode implements ErrorCode {
+    UNAUTHORIZED_ACCESS("접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
     NOT_FOUND("존재하지 않는 예약입니다.", HttpStatus.NOT_FOUND),
     DUPLICATE("동일한 날짜, 시간, 테마에 이미 예약이 존재합니다.", HttpStatus.CONFLICT),
     PAST_DATETIME("지나간 날짜·시간에 대한 예약 생성은 불가능합니다.", HttpStatus.UNPROCESSABLE_ENTITY),
